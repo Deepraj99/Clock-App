@@ -1,7 +1,11 @@
 import 'package:clock_app/clockView.dart';
+import 'package:clock_app/menu_info.dart';
 import 'package:clock_app/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import 'data.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -26,12 +30,9 @@ class _HomePageState extends State<HomePage> {
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildMenuButton('Clock', 'assets/images/clock_icon.png'),
-              buildMenuButton('Alarm', 'assets/images/alarm_icon.png'),
-              buildMenuButton('Timer', 'assets/images/timer_icon.png'),
-              buildMenuButton('Stopwatch', 'assets/images/stopwatch_icon.png'),
-            ],
+            children: menuItems
+                .map((currentMenuInfo) => buildMenuButton(currentMenuInfo))
+                .toList(),
           ),
           VerticalDivider(
             color: Colors.white54,
@@ -128,22 +129,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Padding buildMenuButton(String title, String image) {
-    return Padding(
+  Widget buildMenuButton(MenuInfo currentMenuInfo) {
+    return FlatButton(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: FlatButton(
-        onPressed: () {},
-        child: Column(
-          children: [
-            Image.asset(image, scale: 1.5),
-            SizedBox(height: 16),
-            Text(
-              title,
-              style: TextStyle(
-                  fontFamily: 'avenir', color: Colors.white, fontSize: 14),
-            ),
-          ],
-        ),
+      color: currentMenuInfo.title == 'Clock' ? Colors.red : Colors.transparent,
+      onPressed: () {
+        var menuInfo = Provider.of<MenuInfo>(context);
+        menuInfo.updateMenu(currentMenuInfo);
+      },
+      child: Column(
+        children: [
+          Image.asset(currentMenuInfo.imageSource, scale: 1.5),
+          SizedBox(height: 16),
+          Text(
+            currentMenuInfo.title,
+            style: TextStyle(
+                fontFamily: 'avenir', color: Colors.white, fontSize: 14),
+          ),
+        ],
       ),
     );
   }
